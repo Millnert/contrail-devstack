@@ -160,7 +160,7 @@ function apply_patch() {
     local patch="$1"
     local dir="$2"
     local sudo="$3"
-    local patch_applied="${dir}/$(basename ${patch}).appled"
+    local patch_applied="${dir}/$(basename ${patch}).applied"
 
     # run patch, ignore previously applied patches, and return an
     # error if patch says "fail"
