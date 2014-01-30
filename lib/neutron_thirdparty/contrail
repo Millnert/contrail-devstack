@@ -14,6 +14,9 @@ function install_contrail() {
     sudo mkdir -p /var/log/contrail
     sudo chmod 777 /var/log/contrail
 
+    sudo mkdir /opt/stack/status/contrail
+    sudo chmod 777 /opt/stack/status/contrail
+
     # basic dependencies
     if ! which repo > /dev/null 2>&1 ; then
 	wget http://commondatastorage.googleapis.com/git-repo-downloads/repo
@@ -426,6 +429,11 @@ function stop_contrail() {
     if [ $CONTRAIL_VGW_INTERFACE ]; then
         sudo tunctl -d vgw
     fi
+}
+
+
+function check_contrail() {
+  return 0
 }
 
 # Restore xtrace
