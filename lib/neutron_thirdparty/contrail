@@ -14,7 +14,7 @@ function install_contrail() {
     sudo mkdir -p /var/log/contrail
     sudo chmod 777 /var/log/contrail
 
-    sudo mkdir /opt/stack/status/contrail
+    sudo mkdir -p /opt/stack/status/contrail
     sudo chmod 777 /opt/stack/status/contrail
 
     # basic dependencies
@@ -25,7 +25,15 @@ function install_contrail() {
     fi
 
     # dependencies
-    if is_ubuntu; then
+    if [ $os_VENDOR = "Debian" ]; then
+	echo "Debian!"
+	apt_get install patch scons flex bison make vim
+	apt_get install libexpat1-dev libgettextpo0 libcurl4-openssl-dev
+	apt_get install python-dev autoconf automake build-essential libtool
+	apt_get install libevent-dev libxml2-dev libxslt1-dev
+	apt_get install uml-utilities
+	apt_get install redis-server
+    elif is_ubuntu; then
 	apt_get install patch scons flex bison make vim
 	apt_get install libexpat-dev libgettextpo0 libcurl4-openssl-dev
 	apt_get install python-dev autoconf automake build-essential libtool
@@ -58,7 +66,11 @@ function install_contrail() {
     if [ ! -d $CONTRAIL_SRC/.repo ]; then
         git config --global --get user.name || git config --global user.name "Anonymous"
         git config --global --get user.email || git config --global user.email "anonymous@nowhere.com"
-        repo init -u git@github.com:Juniper/contrail-vnc
+        if [ -z "$CONTRAIL_SCM_METHOD" -o "$CONTRAIL_SCM_METHOD" = "ssh" ]; then
+	       repo init -u git@github.com:Juniper/contrail-vnc
+        elif [ "$CONTRAIL_SCM_METHOD" = "https" ]; then
+               repo init -u https://github.com/Juniper/contrail-vnc -m noauth.xml
+        fi
     fi
     repo sync
     python third_party/fetch_packages.py
